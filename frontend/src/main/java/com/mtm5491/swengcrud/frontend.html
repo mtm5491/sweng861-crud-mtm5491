@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+  <h1>Login</h1>
+  <button id="loginBtn">Login with Email</button>
+  <button id="googleBtn">Login with Google</button>
+
+
+  <script>
+
+    console.log("Script loaded");
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCuHJrJaAoIdZnp7cJ4w3Fbl0-KoZDDE8",
+      authDomain: "sweng-crud-auth.firebaseapp.com",
+      projectId: "sweng-crud-auth"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = prompt("Enter email");
+      const password = prompt("Enter password");
+      try {
+        const userCred = await auth.signInWithEmailAndPassword(email, password);
+        const token = await userCred.user.getIdToken();
+
+        alert("Login successful! Token:\n" + token);
+
+        // Send token to backend
+        fetch("http://localhost:8080/api/protected", {
+          method: "GET",
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        })
+        .then(res => res.text())
+        .then(data => {
+          alert("Backend response:\n" + data);
+        })
+        .catch(err => {
+          alert("Error calling backend: " + err);
+        });
+
+      } catch (err) {
+        alert("Login failed: " + err.message);
+      }
+
+    };
+  // Google login
+    document.getElementById("googleBtn").onclick = async () => {
+   
+    console.log("Google button clicked");
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    try {
+      const result = await firebase.auth().signInWithPopup(provider);
+      const token = await result.user.getIdToken();
+
+      console.log("Token received:", token);
+
+
+
+      alert("Google login successful! Token:\n" + token);
+
+       fetch("http://localhost:8080/api/protected", {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+
+      .then(res => res.text())
+      .then(data => {
+        console.log("Backend response:", data);
+        alert("Backend response:\n" + data);
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
+        alert("Error calling backend: " + err.message);
+      });
+
+
+    } catch (err) {
+      alert("Google login failed: " + err.message);
+    }
+  };
+
+
+  </script>
+</body>
+</html>

@@ -16,15 +16,14 @@
 
     console.log("Script loaded");
     
+    // Firebase configuration from account**
     const firebaseConfig = {
       apiKey: "AIzaSyBCuHJrJaAoIdZnp7cJ4w3Fbl0-KoZDDE8",
       authDomain: "sweng-crud-auth.firebaseapp.com",
       projectId: "sweng-crud-auth"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-
     document.getElementById("loginBtn").onclick = async () => {
       const email = prompt("Enter email");
       const password = prompt("Enter password");
@@ -54,11 +53,9 @@
       }
 
     };
-  // Google login
+    // Google login
     document.getElementById("googleBtn").onclick = async () => {
-   
     console.log("Google button clicked");
-
     const provider = new firebase.auth.GoogleAuthProvider();
 
     try {
